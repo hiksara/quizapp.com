@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz App</title>
+    <style type="text/css">
+body{
+    background-color: whitesmoke;
+}
+
+
+
+
+    </style>
+</head>
+<body>
+
+<div id="quiz-container"></div>
+
+<script>
+    // JSON podaci
+    var quizData = {
+        "quiz": {
+            "q1": {
+                "question": "Which one is correct team name in NBA?",
+                "options": [
+                    "New York Bulls",
+                    "Los Angeles Kings",
+                    "Golden State Warriros",
+                    "Huston Rocket"
+                ],
+                "answer": "Huston Rocket"
+            },
+            "q2": {
+                "question": "'Namaste' is a traditional greeting in which Asian language?",
+                "options": [
+                    "Hindi",
+                    "Mandarin",
+                    "Nepalese",
+                    "Thai"
+                ],
+                "answer": "Hindi"
+            },
+            "q3": {
+                "question": "The Spree river flows through which major European capital city?",
+                "options": [
+                    "Berlin",
+                    "Paris",
+                    "Rome",
+                    "London"
+                ],
+                "answer": "Berlin"
+            },
+            "q4": {
+                "question": "Which famous artist had both a 'Rose Period' and a 'Blue Period'?",
+                "options": [
+                    "Pablo Picasso",
+                    "Vincent van Gogh",
+                    "Salvador DalÃ­",
+                    "Edgar Degas"
+                ],
+                "answer": "Pablo Picasso"
+            }
+        }
+    };
+
+    // Funkcija za generisanje HTML koda
+    function generateQuizHTML(data) {
+        var html = '';
+
+        for (var key in data.quiz) {
+            var question = data.quiz[key].question;
+            var options = data.quiz[key].options;
+            var savedAnswer = localStorage.getItem('q' + key.substring(1));
+
+            html += '<div class="question">';
+            html += '<p>' + question + '</p>';
+
+            // Dodajemo opcije
+            for (var i = 0; i < options.length; i++) {
+                var isChecked = savedAnswer === options[i] ? 'checked' : '';
+                html += '<input type="radio" name="q' + key.substring(1) + '" value="' + options[i] + '" ' + isChecked + '>';
+                html += '<label>' + options[i] + '</label><br>';
+            }
+
+            html += '</div>';
+        }
+
+        // Dodajemo dugme za proveru odgovora
+        html += '<button onclick="checkAnswers()">Check Answers</button>';
+
+        return html;
+    }
+
+    // Funkcija za postavljanje HTML koda na stranicu
+    function renderQuiz() {
+        var quizContainer = document.getElementById('quiz-container');
+        quizContainer.innerHTML = generateQuizHTML(quizData);
+    }
+
+    // Funkcija za proveru odgovora
+    function checkAnswers() {
+        var score = 0;
+
+        for (var key in quizData.quiz) {
+            var selectedOption = document.querySelector('input[name="q' + key.substring(1) + '"]:checked');
+            if (selectedOption) {
+                var userAnswer = selectedOption.value;
+                var correctAnswer = quizData.quiz[key].answer;
+
+                localStorage.setItem('q' + key.substring(1), userAnswer); // Čuvamo odgovor u localStorage
+
+                if (userAnswer === correctAnswer) {
+                    score++;
+                }
+            }
+        }
+
+        alert('Your score: ' + score + ' out of ' + Object.keys(quizData.quiz).length);
+    }
+
+    // Poziv funkcije za prikazivanje kviza
+    renderQuiz();
+</script>
+
+</body>
+</html>
